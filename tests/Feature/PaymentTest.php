@@ -66,9 +66,6 @@ class PaymentTest extends TestCase
      */
     public function user_can_create_a_new_payment()
     {
-        $this->withoutExceptionHandling([AuthenticationException::class]);
-
-
         $userEmail = 'bradley@cooper.com';
         $amount = 5000;
         $currency = 'usd';
@@ -88,6 +85,7 @@ class PaymentTest extends TestCase
         ])->assertStatus(200);
 
         $this->assertEquals(1, Payment::count());
+
         tap(Payment::first(), function (Payment $payment) use ($user, $currency, $name, $description, $message, $userEmail, $amount) {
             $this->assertEquals($user->id, $payment->user_id);
             $this->assertEquals($userEmail, $payment->email);
@@ -97,5 +95,85 @@ class PaymentTest extends TestCase
             $this->assertEquals($description, $payment->description);
             $this->assertEquals($message, $payment->message);
         });
+    }
+
+    /**
+     * @test
+     */
+    public function user_cant_create_new_payments_without_required_fields()
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->json('post', route('payments.store'))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'email',
+                'amount',
+                'currency',
+                'name',
+                'description'
+            ]);
+
+        $this->assertEquals(0, Payment::count());
+    }
+
+    /**
+     * @test
+     */
+    public function user_cant_create_payment_with_not_valid_email()
+    {
+        $notValidEmail = 'not-valid-email';
+        $amount = 5000;
+        $currency = 'usd';
+        $name = 'Bradley Cooper';
+        $description = 'Pay me. Now';
+        $message = 'Hello';
+
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->json('post', route('payments.store', [
+            'email' => $notValidEmail,
+            'amount' => $amount,
+            'currency' => $currency,
+            'name' => $name,
+            'description' => $description,
+            'message' => $message,
+        ]))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'email',
+            ]);
+
+        $this->assertEquals(0, Payment::count());
+    }
+
+    /**
+     * @test
+     */
+    public function user_cant_create_payment_when_passed_amount_as_not_integer()
+    {
+        $notValidEmail = 'bradley@cooper.com';
+        $amount = 'some amount';
+        $currency = 'usd';
+        $name = 'Bradley Cooper';
+        $description = 'Pay me. Now';
+        $message = 'Hello';
+
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->json('post', route('payments.store', [
+            'email' => $notValidEmail,
+            'amount' => $amount,
+            'currency' => $currency,
+            'name' => $name,
+            'description' => $description,
+            'message' => $message,
+        ]))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'amount',
+            ]);
+
+        $this->assertEquals(0, Payment::count());
     }
 }

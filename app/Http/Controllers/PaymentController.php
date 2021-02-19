@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaymentRequest;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 
@@ -12,8 +13,8 @@ class PaymentController extends Controller
         return view('payment.create');
     }
 
-    public function store(Request $request)
+    public function store(PaymentRequest $request)
     {
-        $request->user()->payments()->create($request->all());
+        $request->user()->payments()->create($request->validated());
     }
 }
