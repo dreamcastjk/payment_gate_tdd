@@ -6,3 +6,21 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
+
+# Run tests
+- Configure your test database in .env file.
+
+.env Parameter             | Description
+----------------------|---------------------------------------
+DB_CONNECTION_TESTING | database connection in config file. 
+DB_DATABASE_TESTING   | database name.   
+
+#Run all tests.
+```shell
+php artisan test
+```
+
+#Run specific test class.
+```shell
+php artisan test --filter YourTestClass
+```
