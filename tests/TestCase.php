@@ -7,4 +7,6 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+
+    const UNIQUE_CODE_LENGTH = 16;
 }

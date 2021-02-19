@@ -8,7 +8,7 @@ use App\Models\Payment;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Interfaces\Payments\IPaymentCodeGenerator;
-use App\Services\Payments\FakePaymentCodeGenerator;
+use App\Services\Payments\FakePaymentCodeGeneratorService;
 
 class PaymentTest extends TestCase
 {
@@ -77,7 +77,7 @@ class PaymentTest extends TestCase
 
         $user = User::factory()->create(['email' => $userEmail]);
 
-        $this->app->instance(IPaymentCodeGenerator::class, new FakePaymentCodeGenerator);
+        $this->app->instance(IPaymentCodeGenerator::class, new FakePaymentCodeGeneratorService);
 
         $this->actingAs($user)->json('post', route('payments.store'), [
             'email' => $userEmail,

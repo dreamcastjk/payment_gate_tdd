@@ -6,7 +6,7 @@ namespace App\Services\Payments;
 
 use App\Interfaces\Payments\IPaymentCodeGenerator;
 
-class FakePaymentCodeGenerator implements IPaymentCodeGenerator
+class FakePaymentCodeGeneratorService implements IPaymentCodeGenerator
 {
     public function generate()
     {
