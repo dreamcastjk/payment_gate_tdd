@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\Payment;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Payment;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Interfaces\Payments\IPaymentCodeGenerator;
+use App\Services\Payments\FakePaymentCodeGenerator;
 
 class PaymentTest extends TestCase
 {
@@ -26,7 +28,7 @@ class PaymentTest extends TestCase
     /**
      * @test
      */
-    public function customer_can_see_a_form_for_creating_new_payment()
+    public function user_can_see_a_form_for_creating_new_payment()
     {
         $user = User::factory()->create();
 
@@ -75,6 +77,8 @@ class PaymentTest extends TestCase
 
         $user = User::factory()->create(['email' => $userEmail]);
 
+        $this->app->instance(IPaymentCodeGenerator::class, new FakePaymentCodeGenerator);
+
         $this->actingAs($user)->json('post', route('payments.store'), [
             'email' => $userEmail,
             'amount' => $amount,
@@ -94,6 +98,7 @@ class PaymentTest extends TestCase
             $this->assertEquals($name, $payment->name);
             $this->assertEquals($description, $payment->description);
             $this->assertEquals($message, $payment->message);
+            $this->assertEquals('TESTCODE12345', $payment->code);
         });
     }
 

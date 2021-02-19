@@ -22,6 +22,7 @@ class CreatePaymentsTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('message')->nullable();
+            $table->string('code')->unique();
             $table->timestamps();
         });
     }
