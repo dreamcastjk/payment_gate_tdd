@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentRequest;
 use App\Interfaces\Payments\IPaymentCodeGenerator;
+use App\Models\PaymentStatus;
 
 class PaymentController extends Controller
 {
@@ -17,7 +18,8 @@ class PaymentController extends Controller
         $request->user()
             ->payments()
             ->create(array_merge($request->validated(), [
-                'code' => app(IPaymentCodeGenerator::class)->generate()
+                'code' => app(IPaymentCodeGenerator::class)->generate(),
+                'status_id' => PaymentStatus::NEW
             ]));
     }
 }
